@@ -11,8 +11,21 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
-    @movies = Movie.order(params[:sort_params])
+    @all_ratings = Movie.all_ratings
+    
+    if params[:ratings] == nil
+      @ratings = Hash.new
+      @all_ratings.each do |rating|
+        @ratings[rating] = 1
+      end
+    else
+      @ratings = params[:ratings]
+    end
+    
+    @movies = Movie.with_ratings(@ratings)
+    if params[:sort_params]
+      @movies = Movie.order(params[:sort_params])
+    end
     
     if params[:sort_params].to_s == "title"
       @title_class = 'hilite'
@@ -20,6 +33,7 @@ class MoviesController < ApplicationController
     if params[:sort_params].to_s == "release_date"
       @release_class = 'hilite'
     end
+    
   end
 
   def new
