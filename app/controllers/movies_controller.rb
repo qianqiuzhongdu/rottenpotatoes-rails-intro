@@ -13,18 +13,17 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     
-    if params[:ratings] == nil
-      @ratings = Hash.new
-      @all_ratings.each do |rating|
-        @ratings[rating] = 1
-      end
-    else
-      @ratings = params[:ratings]
-    end
+    remember = false
     
-    @movies = Movie.with_ratings(@ratings)
-    if params[:sort_params]
-      @movies = Movie.order(params[:sort_params])
+    @sort_params = params[:sort_params]
+    @ratings = params[:ratings]
+    
+    if @ratings and @sort_params
+      @movies = Movie.with_ratings(@ratings).order(@sort_params)
+    elsif @sort_params
+      @movies = Movie.order(@sort_params)
+    elsif @ratings
+      @movies = Movie.with_ratings(@ratings)
     end
     
     if params[:sort_params].to_s == "title"
@@ -33,6 +32,37 @@ class MoviesController < ApplicationController
     if params[:sort_params].to_s == "release_date"
       @release_class = 'hilite'
     end
+    
+    if params[:sort_params]
+      session[:sort_params] = params[:sort_params]
+    end
+    
+    if params[:ratings]
+      session[:ratings] = params[:ratings]
+    end
+    
+    if(!params[:sort_params] and !params[:ratings]) and (session[:sort_params] and session[:ratings])
+      remember = 1
+    elsif !params[:sort_params] and session[:sort_params]
+      remember = 1
+    elsif !params[:ratings] and session[:ratings]
+      remember = 1
+    end
+    
+    if remember == 1
+      flash.keep
+      redirect_to movies_path(:sort_params => session[:sort_params], :ratings => session[:ratings])
+    end
+    
+    
+    #if @ratings and params[:commit] != "Refresh"
+      #@ratings = Hash.new
+      #@all_ratings.each do |rating|
+        #@ratings[rating] = 1
+      #end
+    #elsif !@ratings
+      #@ratings = Hash.new
+    #end
     
   end
 
