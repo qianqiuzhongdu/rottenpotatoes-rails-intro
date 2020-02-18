@@ -23,9 +23,8 @@ class MoviesController < ApplicationController
        @all_ratings.each do |rating|
          @ratings[rating] = 1
        end
-     else
+    else
        @ratings = params[:ratings]
-     end
     end
     
     if @ratings and @sort_params
