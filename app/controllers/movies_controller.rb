@@ -16,7 +16,17 @@ class MoviesController < ApplicationController
     remember = false
     
     @sort_params = params[:sort_params]
-    @ratings = params[:ratings]
+    #@ratings = params[:ratings]
+    
+    if params[:ratings] == nil
+       @ratings = Hash.new
+       @all_ratings.each do |rating|
+         @ratings[rating] = 1
+       end
+     else
+       @ratings = params[:ratings]
+     end
+    end
     
     if @ratings and @sort_params
       @movies = Movie.with_ratings(@ratings).order(@sort_params)
