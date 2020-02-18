@@ -54,16 +54,6 @@ class MoviesController < ApplicationController
       redirect_to movies_path(:sort_params => session[:sort_params], :ratings => session[:ratings])
     end
     
-    
-    #if @ratings and params[:commit] != "Refresh"
-      #@ratings = Hash.new
-      #@all_ratings.each do |rating|
-        #@ratings[rating] = 1
-      #end
-    #elsif !@ratings
-      #@ratings = Hash.new
-    #end
-    
   end
 
   def new
